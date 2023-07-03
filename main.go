@@ -1,10 +1,25 @@
 package main
 
-import "github.com/454270186/GoDazzle/list/arraylist"
+import (
+	"sync"
+
+	"github.com/454270186/GoDazzle/list/arraylist"
+)
 
 func main() {
-	arrList := arraylist.New(1, 2, 3, 4)
-	arrList.Println()
-	arrList.Remove(2)
-	arrList.Println()
+	arr := arraylist.New(arraylist.Option{ThreadSafe: true})
+	var wg sync.WaitGroup
+
+	wg.Add(10000)
+
+	for i := 0; i < 10000; i++ {
+		go func() {
+			defer wg.Done()
+			arr.Add(1)
+			arr.Remove(0)
+		}()
+	}
+
+
+	wg.Wait()
 }

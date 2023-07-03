@@ -5,13 +5,13 @@ import (
 )
 
 // Sort is the Open interface implementing go "sort" interface
-func Sort(values []interface{}, cmp comparator) {
+func Sort(values []interface{}, cmp Comparator) {
 	sort.Sort(sortable{values, cmp})
 }
 
 type sortable struct {
 	values []interface{}
-	cmp comparator
+	cmp Comparator
 }
 
 func (s sortable) Len() int {

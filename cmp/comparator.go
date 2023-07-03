@@ -6,4 +6,4 @@ package cmp
 	- if a = b ===> 0
 	- if a > b ===> 1 (or other negative number)
 */
-type comparator func(a, b any) int
+type Comparator func(a, b any) int

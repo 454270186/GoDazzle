@@ -3,5 +3,5 @@ a Golang datastructure package
 
 ## Features
 - Multiple data structure supporting
-- Thread Safe
+- Concurrency Safe
 - Embedded JSON Encoder/Decoder

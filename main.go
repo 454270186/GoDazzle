@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/454270186/GoDazzle/list/arraylist"
@@ -8,18 +9,24 @@ import (
 
 func main() {
 	arr := arraylist.New(arraylist.Option{ThreadSafe: true})
+	
 	var wg sync.WaitGroup
-
-	wg.Add(10000)
-
-	for i := 0; i < 10000; i++ {
-		go func() {
-			defer wg.Done()
-			arr.Add(1)
-			arr.Remove(0)
-		}()
+	threadNum := 10
+	optNum := 5
+	wg.Add(threadNum)
+	mulAdd := func ()  {
+		defer wg.Done()
+		for i := 0; i < optNum; i++ {
+			arr.Add(6)
+		}
 	}
 
+	for i := 0; i < threadNum; i++ {
+		go mulAdd()
+	}
 
 	wg.Wait()
+
+	fmt.Println(arr.String())
+	fmt.Println(arr.Size())
 }

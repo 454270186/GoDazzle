@@ -66,7 +66,7 @@ func (arrayList *ArrayList) Contains(value interface{}) bool {
 }
 
 func (arrayList *ArrayList) Sort(cmpFunc cmp.Comparator) {
-	cmp.Sort(arrayList.elements, cmpFunc)
+	cmp.Sort(arrayList.elements[:arrayList.size], cmpFunc)
 }
 
 func (arrayList *ArrayList) Empty() bool {
@@ -111,7 +111,7 @@ func (arrayList *ArrayList) String() string {
 			builder.WriteString(", ")
 		}
 	}
-	builder.WriteString("]\n")
+	builder.WriteString("]")
 	return builder.String()
 }
 

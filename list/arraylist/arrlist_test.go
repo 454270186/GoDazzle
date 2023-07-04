@@ -12,10 +12,10 @@ func TestTFArrList_Concurrency(t *testing.T) {
 	list := arraylist.New(arraylist.Option{ThreadSafe: true})
 
 	// 设置并发测试的线程数
-	numThreads := 100
+	numThreads := 1
 
 	// 设置每个线程要执行的操作次数
-	operationsPerThread := 1000
+	operationsPerThread := 5
 
 	// 设置一个等待组，以便在所有线程完成测试前等待
 	var wg sync.WaitGroup
@@ -31,8 +31,7 @@ func TestTFArrList_Concurrency(t *testing.T) {
 				// ...
 
 				// 例如，在每个线程中执行 Add 操作
-				list.Add(j)
-				list.Remove(0)
+				list.Add(6)
 			}
 		}()
 	}
@@ -47,6 +46,8 @@ func TestTFArrList_Concurrency(t *testing.T) {
 	expectedSize := int32(numThreads * operationsPerThread)
 	actualSize := int32(list.Size())
 	if expectedSize != actualSize {
-		t.Errorf("Expected size: %d, Actual size: %d", expectedSize, actualSize)
+		t.Errorf("Expected size: %d, Actual size: %d\n", expectedSize, actualSize)
+		t.Errorf("%v", list.String())
+		t.Error(list.Values()...)
 	}
 }

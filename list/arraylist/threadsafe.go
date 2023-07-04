@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"sync"
-	"sync/atomic"
 
 	"github.com/454270186/GoDazzle/cmp"
 	"github.com/454270186/GoDazzle/list"
@@ -13,9 +12,8 @@ import (
 var _ list.List = (*TFArrList)(nil)
 
 type TFArrList struct {
-	sync.Mutex
+	sync.RWMutex
 	elements []interface{}
-	size atomic.Int32
 }
 
 func newTFArrList() *TFArrList {
@@ -23,46 +21,41 @@ func newTFArrList() *TFArrList {
 }
 
 func (tf *TFArrList) Get(index int) (interface{}, bool) {
+	tf.RLock()
+	defer tf.RUnlock()
+
 	if !tf.isInRange(index) {
 		return nil, false
 	}
-
-	tf.Lock()
-	defer tf.Unlock()
 
 	return tf.elements[index], true
 }
 
 func (tf *TFArrList) Remove(index int) {
+	tf.Lock()
 	if !tf.isInRange(index) {
 		return
 	}
 
-	tf.Lock()
-	{
-		tf.elements[index] = nil
-		copy(tf.elements[index:], tf.elements[index+1:])
-		tf.size.Add(-1)
-	}
+	tf.elements[index] = nil
+	copy(tf.elements[index:], tf.elements[index+1:])
+
 	tf.Unlock()
 
-	tf.shrink()
+	//tf.shrink()
 }
 
 func (tf *TFArrList) Add(values ...interface{}) {
-	tf.extend(len(values))
-
 	tf.Lock()
 	defer tf.Unlock()
-	for _, val := range values {
-		tf.elements[tf.size.Load()] = val
-		tf.size.Add(1)
-	}
+	//tf.extend(len(values))
+
+	tf.elements = append(tf.elements, values...)
 }
 
 func (tf *TFArrList) Contains(value interface{}) bool {
-	tf.Lock()
-	defer tf.Unlock()
+	tf.RLock()
+	defer tf.RUnlock()
 
 	isContains := false
 
@@ -82,35 +75,29 @@ func (tf *TFArrList) Sort(cmpFunc cmp.Comparator) {
 }
 
 func (tf *TFArrList) Empty() bool {
-	return tf.size.Load() == 0
+	tf.RLock()
+	defer tf.RUnlock()
+	return len(tf.elements) == 0
 }
 
 func (tf *TFArrList) Size() int {
-	return int(tf.size.Load())
+	tf.RLock()
+	defer tf.RUnlock()
+	return len(tf.elements)
 }
 
 func (tf *TFArrList) Clear() {
 	tf.Lock()
 	defer tf.Unlock()
 	tf.elements = make([]interface{}, 0)
-	tf.size.Store(0)
 }
 
 func (tf *TFArrList) Values() []interface{} {
 	tf.Lock()
 	defer tf.Unlock()
 
-	vals := make([]interface{}, 0, tf.size.Load())
-	nilIndex := -1
-	for i, val := range tf.elements {
-		if val == nil {
-			nilIndex = i
-			break
-		}
-	}
-	if nilIndex >= 0 {
-		copy(vals, tf.elements[0:nilIndex])
-	}
+	vals := make([]interface{}, len(tf.elements))
+	copy(vals, tf.elements)
 	
 	return vals
 }
@@ -120,7 +107,7 @@ func (tf *TFArrList) String() string {
 	builder.WriteString("ArrayList: ")
 	builder.WriteString("[")
 
-	tf.Lock()
+	tf.RLock()
 	for i, val := range tf.elements {
 		if val == nil {
 			continue
@@ -131,9 +118,9 @@ func (tf *TFArrList) String() string {
 			builder.WriteString(", ")
 		}
 	}
-	tf.Unlock()
+	tf.RUnlock()
 
-	builder.WriteString("]\n")
+	builder.WriteString("]")
 	return builder.String()
 }
 
@@ -149,43 +136,40 @@ func (tf *TFArrList) Println() {
 	fmt.Println()
 }
 
+// No Lock inside
 func (tf *TFArrList) isInRange(index int) bool {
-	return index >= 0 && int(tf.size.Load()) > index
+	return index >= 0 && len(tf.elements) > index
 }
 
-func (tf *TFArrList) resize(cap int) {
-	tf.Lock()
-	defer tf.Unlock()
+// // No Lock inside
+// func (tf *TFArrList) resize(cap int) {
+// 	newElements := make([]interface{}, cap)
+// 	copy(newElements, tf.elements)
+// 	tf.elements = newElements
+// }
 
-	newElements := make([]interface{}, cap)
-	copy(newElements, tf.elements)
-	tf.elements = newElements
-}
+// // No Lock inside
+// func (tf *TFArrList) extend(n int) {
+// 	if len(tf.elements) == 0 {
+// 		tf.resize(n)
+// 	}
 
-func (tf *TFArrList) extend(n int) {
-	tf.Lock()
-	curCapacity := cap(tf.elements)
-	tf.Unlock()
-	if curCapacity == 0 {
-		tf.resize(n)
-		curCapacity = n
-	}
+// 	curCapacity := cap(tf.elements)
+// 	if len(tf.elements) + n > curCapacity {
+// 		newCap := curCapacity * extendFactor
+// 		tf.resize(newCap)
+// 	}
+// }
 
-	if int(tf.size.Load()) + n > curCapacity {
-		newCap := curCapacity * extendFactor
-		tf.resize(newCap)
-	}
-}
-
-func (tf *TFArrList) shrink() {
-	if shrinkFactor == 0 {
-		return
-	}
-	tf.Lock()
-	curCapacity := cap(tf.elements)
-	tf.Unlock()
-	if int(tf.size.Load()) < curCapacity * int(shrinkFactor) {
-		tf.resize(int(tf.size.Load()))
-	}
-}
+// func (tf *TFArrList) shrink() {
+// 	if shrinkFactor == 0 {
+// 		return
+// 	}
+// 	tf.Lock()
+// 	defer tf.Unlock()
+// 	curCapacity := cap(tf.elements)
+// 	if len(tf.elements) < curCapacity * int(shrinkFactor) {
+// 		tf.resize(len(tf.elements))
+// 	}
+// }
 

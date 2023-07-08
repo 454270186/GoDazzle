@@ -1,8 +1,14 @@
 package linklist
 
-import "github.com/454270186/GoDazzle/cmp"
+import (
+	"fmt"
+	"strings"
 
-//var _ list.List =
+	"github.com/454270186/GoDazzle/cmp"
+	"github.com/454270186/GoDazzle/list"
+)
+
+var _ list.List = (*Linklist)(nil)
 
 type Linklist struct {
 	head *element
@@ -97,6 +103,14 @@ func (l *Linklist) Sort(cmpFunc cmp.Comparator) {
 	l.Add(vals...)
 }
 
+func (l *Linklist) Empty() bool {
+	return l.size == 0
+}
+
+func (l *Linklist) Size() int {
+	return l.size
+}
+
 func (l *Linklist) Clear() {
 	l.head = nil
 	l.tail = nil
@@ -112,6 +126,19 @@ func (l *Linklist) Values() []interface{} {
 	}
 
 	return vals
+}
+
+func (l *Linklist) String() string {
+	builder := strings.Builder{}
+	builder.WriteString("LinkList: [")
+	for cur := l.head; cur != nil; cur = cur.next {
+		builder.WriteString(fmt.Sprintf("%v", cur.value))
+		if cur.next != nil {
+			builder.WriteString(" -> ")
+		}
+	}
+	builder.WriteString("]")
+	return builder.String()
 }
 
 func (l *Linklist) isInRange(index int) bool {

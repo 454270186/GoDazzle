@@ -16,12 +16,13 @@ type ArrayList struct {
 }
 
 var (
-	extendFactor = 2
 	shrinkFactor = 0.25
 )
 
-func newArrayList() *ArrayList {
-	return &ArrayList{}
+func New(values ...interface{}) *ArrayList {
+	a := ArrayList{}
+	a.Add(values...)
+	return &a
 }
 
 func (arrayList *ArrayList) Get(index int) (interface{}, bool) {
@@ -45,10 +46,8 @@ func (arrayList *ArrayList) Remove(index int) {
 }
 
 func (arrayList *ArrayList) Add(values ...interface{}) {
-	arrayList.extend(len(values))
-
 	for _, val := range values {
-		arrayList.elements[arrayList.size] = val
+		arrayList.elements = append(arrayList.elements, val)
 		arrayList.size++
 	}
 }
@@ -83,7 +82,7 @@ func (arrayList *ArrayList) Clear() {
 }
 
 func (arrayList *ArrayList) Values() []interface{} {
-	vals := make([]interface{}, 0, arrayList.size)
+	vals := make([]interface{}, arrayList.size)
 	nilIndex := -1
 	for i, val := range arrayList.elements {
 		if val == nil {
@@ -128,25 +127,13 @@ func (arrayList *ArrayList) Println() {
 }
 
 func (arrayList *ArrayList) isInRange(index int) bool {
-	return index >= 0 && arrayList.size > index
+	return index >= 0 && index < arrayList.size
 }
 
 func (arrList *ArrayList) resize(cap int) {
 	newElements := make([]interface{}, cap)
 	copy(newElements, arrList.elements)
 	arrList.elements = newElements
-}
-
-func (arrayList *ArrayList) extend(n int) {
-	if cap(arrayList.elements) == 0 {
-		arrayList.resize(n)
-	}
-
-	curCapacity := cap(arrayList.elements)
-	if len(arrayList.elements) + n > curCapacity {
-		newCap := curCapacity * extendFactor
-		arrayList.resize(newCap)
-	}
 }
 
 func (arrayList *ArrayList) shrink() {

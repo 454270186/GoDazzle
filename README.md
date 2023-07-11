@@ -26,7 +26,7 @@ type Container interface {
 - Doubly linked list
 
 **list interface**
-impl Container interface
+impl Container, JsonCoder, JsonDecoder
 ```go
 type List interface {
 	Get(index int) (interface{}, bool)
@@ -37,6 +37,19 @@ type List interface {
 	
 	container.Container
 }
+```
+
+#### JSON
+**Example**
+```go
+	data := `[1, 2, 3, 4, 5]`
+	d := linklist.New()
+	d.FromJson([]byte(data)) // equal to json.Unmarshal([]byte(data), d)
+	fmt.Println(d.Values()...)
+```
+Output:
+```
+1 2 3 4 5
 ```
 
 

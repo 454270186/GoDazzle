@@ -82,18 +82,7 @@ func (arrayList *ArrayList) Clear() {
 }
 
 func (arrayList *ArrayList) Values() []interface{} {
-	vals := make([]interface{}, arrayList.size)
-	nilIndex := -1
-	for i, val := range arrayList.elements {
-		if val == nil {
-			nilIndex = i
-			break
-		}
-	}
-	if nilIndex >= 0 {
-		copy(vals, arrayList.elements[0:nilIndex])
-	}
-	return vals
+	return append([]interface{}{}, arrayList.elements...)
 }
 
 func (arrayList *ArrayList) String() string {

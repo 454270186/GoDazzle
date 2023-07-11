@@ -38,3 +38,13 @@ type List interface {
 	container.Container
 }
 ```
+
+
+<br>
+
+## Benchmark
+
+Run:
+```go
+go test -run=NO_TEST -bench . -benchmem  -benchtime 1s ./...
+```

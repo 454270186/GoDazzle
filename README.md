@@ -3,7 +3,7 @@ a Golang datastructure package
 
 ## Features
 - Multiple data structure supporting
-- Concurrency Safe
+- Some structures are Concurrency Safe
 - Embedded JSON Encoder/Decoder
 
 ## Usage
@@ -52,6 +52,24 @@ Output:
 1 2 3 4 5
 ```
 
+<br>
+
+### Map
+- GoMap -- native map
+- SyncMap -- concurrency safe map
+
+**map interface**
+impl Container, JsonCoder, JsonDecoder
+```go
+type Map interface {
+	Put(key, value interface{})
+	Get(key interface{}) (interface{}, bool)
+	Remove(key interface{})
+	Keys() []interface{}
+
+	container.Container
+}
+```
 
 <br>
 

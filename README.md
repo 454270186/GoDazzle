@@ -6,6 +6,12 @@ a Golang datastructure package
 - Some structures are Concurrency Safe
 - Embedded JSON Encoder/Decoder
 
+## Getting GoDazzle
+Run:
+```
+go get -u github.com/454270186/GoDazzle
+```
+
 ## Usage
 
 ### Container

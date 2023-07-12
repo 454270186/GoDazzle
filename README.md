@@ -83,6 +83,7 @@ type Map interface {
 - LinkQueue
 - LoopQueue
 - PriorityQueue
+- SyncQueue
 
 **queue interface**
 ```go

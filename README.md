@@ -79,6 +79,25 @@ type Map interface {
 
 <br>
 
+### Queue
+- LinkQueue
+- LoopQueue
+- PriorityQueue
+
+**queue interface**
+```go
+type Queue interface {
+	Push(val interface{})
+	Pop() bool
+	Front() (interface{}, bool)
+	Sort(cmpFunc cmp.Comparator)
+
+	container.Container
+}
+```
+
+<br>
+
 ## Benchmark
 
 Run:

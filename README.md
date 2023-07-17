@@ -12,6 +12,41 @@ Run:
 go get -u github.com/454270186/GoDazzle
 ```
 
+### Example
+```go
+func main() {
+	list := linklist.New() // create a linklist
+
+	// Add value
+	list.Add(5, 4, 3, 2, 1)
+	fmt.Println(list.Values()...) // [5, 4, 3, 2, 1]
+
+	// Get value by index
+	fmt.Println(list.Get(1)) // 4
+
+	// Remove value by index
+	list.Remove(3)
+	fmt.Println(list.Values()...) // [5, 4, 3, 1]
+
+	// Sort list by built-in func
+	list.Sort(cmp.IntComparator)
+	fmt.Println(list.Values()...) // [1, 3, 4, 5]
+
+	// Sort by custom comparator
+	list.Sort(func(a, b interface{}) int {
+		num1 := a.(int)
+		num2 := b.(int)
+
+		if num1 > num2 {
+			return -1
+		}
+
+		return 0
+	})
+	fmt.Println(list.Values()...)
+}
+```
+
 ## Usage
 
 ### Container

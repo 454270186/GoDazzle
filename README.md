@@ -14,6 +14,15 @@ go get -u github.com/454270186/GoDazzle
 
 ### Example
 ```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/454270186/GoDazzle/cmp"
+	"github.com/454270186/GoDazzle/list/linklist"
+)
+
 func main() {
 	list := linklist.New() // create a linklist
 

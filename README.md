@@ -37,7 +37,7 @@ func main() {
 	list.Remove(3)
 	fmt.Println(list.Values()...) // [5, 4, 3, 1]
 
-	// Sort list by built-in func
+	// Sort list by built-in comparator
 	list.Sort(cmp.IntComparator)
 	fmt.Println(list.Values()...) // [1, 3, 4, 5]
 
@@ -52,7 +52,7 @@ func main() {
 
 		return 0
 	})
-	fmt.Println(list.Values()...)
+	fmt.Println(list.Values()...) // [5, 4, 3, 1]
 }
 ```
 
